@@ -22,6 +22,8 @@ class Bands(models.Model):
     is_published = models.BooleanField(choices=Status.choices, default=Status.DRAFT)
     cat = models.ForeignKey('Category', on_delete=models.PROTECT)
     tags = models.ManyToManyField('TagPost', blank=True, related_name='tags')
+    frontman = models.OneToOneField(
+        'Frontman', on_delete=models.SET_NULL, null=True, blank=True, related_name='band')
 
     class Meta:
         ordering = ['-time_create']
@@ -56,4 +58,12 @@ class TagPost(models.Model):
 
     def __str__(self):
         return self.tag
+
+
+class Frontman(models.Model):
+    name = models.CharField(max_length=100)
+    age = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.name
 
