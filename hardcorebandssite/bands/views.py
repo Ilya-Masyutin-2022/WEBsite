@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 
-from bands.models import Bands, Category
+from bands.models import Bands, Category, TagPost
 
 menu = [
     {'title': "О сайте", 'url_name': 'about'},
@@ -42,12 +42,24 @@ def show_post(request, post_slug):
                   context=data)
 
 
+def show_tag_postlist(request, tag_slug):
+    tag = get_object_or_404(TagPost, slug=tag_slug)
+    posts = tag.tags.filter(is_published=Bands.Status.PUBLISHED)
+    data = {
+        'title': f'Тег: {tag.tag}',
+        'menu': menu,
+        'posts': posts,
+        'cat_selected': None,
+    }
+    return render(request, 'bands/index.html', context=data)
+
+
 def index(request):  # HttpRequest
-    posts = Bands.published.all()
     data = {
         'title': 'Главная страница',
         'menu': menu,
-        'posts': posts,
+        'posts': Bands.published.all(),
+        'cat_selected': 0,
     }
     return render(request, 'bands/index.html', context=data)
 
