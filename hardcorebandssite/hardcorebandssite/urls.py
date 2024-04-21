@@ -25,6 +25,6 @@ urlpatterns = [
 ]
 
 admin.site.site_header = "Панель администрирования"
-admin.site.index_title = "Популярные метал-группы"
+admin.site.index_title = "Популярные core-группы"
 
 handler404 = pageNotFound
