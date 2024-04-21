@@ -26,6 +26,8 @@ class Bands(models.Model):
         'Frontman', on_delete=models.SET_NULL, null=True, blank=True, related_name='band')
 
     class Meta:
+        verbose_name = 'Метал-группы'
+        verbose_name_plural = 'Метал-группы'
         ordering = ['-time_create']
         indexes = [
             models.Index(fields=['-time_create']),

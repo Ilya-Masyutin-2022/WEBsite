@@ -24,4 +24,7 @@ urlpatterns = [
     path('', include('bands.urls')),
 ]
 
+admin.site.site_header = "Панель администрирования"
+admin.site.index_title = "Популярные метал-группы"
+
 handler404 = pageNotFound
