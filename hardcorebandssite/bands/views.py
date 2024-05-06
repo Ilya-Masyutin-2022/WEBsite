@@ -71,10 +71,14 @@ def about(request):
 
 
 def addpage(request):
-    form = AddPostForm()
-    return render(request, 'bands/addpage.html',
-                  {'menu': menu, 'title': 'Добавление статьи', 'form':
-                      form})
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+        else:
+            form = AddPostForm()
+        return render(request, 'bands/addpage.html',
+                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
 def contact(request):
