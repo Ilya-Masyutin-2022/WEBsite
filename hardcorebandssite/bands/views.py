@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 
+from bands.forms import AddPostForm
 from bands.models import Bands, Category, TagPost
 
 menu = [
@@ -70,8 +71,10 @@ def about(request):
 
 
 def addpage(request):
+    form = AddPostForm()
     return render(request, 'bands/addpage.html',
-                  {'menu': menu, 'title': 'Добавление статьи'})
+                  {'menu': menu, 'title': 'Добавление статьи', 'form':
+                      form})
 
 
 def contact(request):
