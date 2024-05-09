@@ -8,6 +8,10 @@ class PublishedModel(models.Manager):
         return super().get_queryset().filter(is_published=Bands.Status.PUBLISHED)
 
 
+class UploadFiles(models.Model):
+    file = models.FileField(upload_to='uploads_model')
+
+
 class Bands(models.Model):
     class Status(models.IntegerChoices):
         DRAFT = 0, 'Черновик'
