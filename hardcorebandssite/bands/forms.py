@@ -17,7 +17,7 @@ class AddPostForm(forms.ModelForm):
 
     class Meta:
         model = Bands
-        fields = ['title', 'slug', 'content',
+        fields = ['title', 'slug', 'content', 'photo',
                   'is_published', 'cat', 'frontman', 'tags']
         labels = {'slug': 'URL'}
         widgets = {
