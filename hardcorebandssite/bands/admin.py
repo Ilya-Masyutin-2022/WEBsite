@@ -26,7 +26,7 @@ class BandsAdmin(admin.ModelAdmin):
     save_on_top = True
     filter_horizontal = ['tags']
     fields = ['title', 'slug', 'content', 'photo',
-              'post_photo', 'cat', 'husband', 'tags']
+              'post_photo', 'cat', 'frontman', 'tags']
     readonly_fields = ['post_photo']
     list_display = ('title', 'post_photo', 'time_create', 'is_published', 'cat')
     list_display_links = ('title', )
