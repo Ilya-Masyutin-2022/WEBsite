@@ -1,4 +1,6 @@
 from django.contrib import admin, messages
+from django.utils.safestring import mark_safe
+
 from .models import Bands, Category
 
 
@@ -21,10 +23,12 @@ class FrontmanFilter(admin.SimpleListFilter):
 
 @admin.register(Bands)
 class BandsAdmin(admin.ModelAdmin):
+    save_on_top = True
     filter_horizontal = ['tags']
-    fields = ['title', 'slug', 'content', 'cat', 'frontman', 'tags']
-    prepopulated_fields = {"slug": ("title",)}
-    list_display = ('title', 'time_create', 'is_published', 'cat', 'brief_info')
+    fields = ['title', 'slug', 'content', 'photo',
+              'post_photo', 'cat', 'husband', 'tags']
+    readonly_fields = ['post_photo']
+    list_display = ('title', 'post_photo', 'time_create', 'is_published', 'cat')
     list_display_links = ('title', )
     list_editable = ('is_published', )
     ordering = ['-time_create', 'title']
@@ -33,9 +37,11 @@ class BandsAdmin(admin.ModelAdmin):
     search_fields = ['title', 'cat__name']
     list_filter = [FrontmanFilter, 'cat__name', 'is_published']
 
-    @admin.display(description="Краткое описание")
-    def brief_info(self, bands: Bands):
-        return f"Описание {len(bands.content)} символов."
+    @admin.display(description="Изображение")
+    def post_photo(self, bands: Bands):
+        if bands.photo:
+            return mark_safe(f"<img src = '{bands.photo.url}'width = 50 > ")
+        return "Без фото"
 
     @admin.action(description="Опубликовать выбранные записи")
     def set_published(self, request, queryset):
