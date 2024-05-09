@@ -1,6 +1,5 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.deconstruct import deconstructible
 
 from .models import Category, Frontman, Bands
 from django.core.validators import MinLengthValidator, MaxLengthValidator
