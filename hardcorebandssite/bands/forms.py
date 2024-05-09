@@ -5,6 +5,10 @@ from .models import Category, Frontman, Bands
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 
+class UploadFileForm(forms.Form):
+    file = forms.ImageField(label="Изображение")
+
+
 class AddPostForm(forms.ModelForm):
     cat = forms.ModelChoiceField(queryset=Category.objects.all(),
                                  empty_label="Категория не выбрана", label="Категории")

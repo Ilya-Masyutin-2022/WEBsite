@@ -1,8 +1,10 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 
-from bands.forms import AddPostForm
+from bands.forms import AddPostForm, UploadFileForm
 from bands.models import Bands, Category, TagPost
+
+import uuid
 
 menu = [
     {'title': "О сайте", 'url_name': 'about'},
@@ -66,16 +68,28 @@ def index(request):  # HttpRequest
 
 
 def handle_uploaded_file(f):
-    with open(f"uploads/{f.name}", "wb+") as destination:
+    name = f.name
+    ext = ''
+
+    if '.' in name:
+        ext = name[name.rindex('.'):]
+        name = name[:name.rindex('.')]
+
+    suffix = str(uuid.uuid4())
+    with open(f"uploads/{name}_{suffix}{ext}", "wb+") as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
 
 def about(request):
     if request.method == "POST":
-        handle_uploaded_file(request.FILES['file_upload'])
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(form.cleaned_data['file'])
+    else:
+        form = UploadFileForm()
     return render(request, 'bands/about.html',
-              {'title': 'О сайте', 'menu': menu})
+                  {'title': 'О сайте', 'menu': menu, 'form': form})
 
 
 def addpage(request):
