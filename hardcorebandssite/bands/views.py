@@ -1,5 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views import View
+from django.views.generic import TemplateView
 
 from bands.forms import AddPostForm, UploadFileForm
 from bands.models import Bands, Category, TagPost, UploadFiles
@@ -57,14 +59,23 @@ def show_tag_postlist(request, tag_slug):
     return render(request, 'bands/index.html', context=data)
 
 
-def index(request):  # HttpRequest
-    data = {
+class BandsHome(TemplateView):
+    template_name = 'bands/index.html'
+    extra_context = {
         'title': 'Главная страница',
         'menu': menu,
-        'posts': Bands.published.all(),
+        'posts':
+            Bands.published.all().select_related('cat'),
         'cat_selected': 0,
     }
-    return render(request, 'bands/index.html', context=data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Главная страница'
+        context['menu'] = menu
+        context['posts'] = Bands.published.all().select_related('cat')
+        context['cat_selected'] = int(self.request.GET.get('cat_id', 0))
+        return context
 
 
 def about(request):
@@ -90,6 +101,21 @@ def addpage(request):
 
     return render(request, 'bands/addpage.html',
                   {'menu': menu, 'title': 'Добавление статьи', 'form': form})
+
+
+class AddPage(View):
+    def get(self, request):
+        form = AddPostForm()
+        return render(request, 'bands/addpage.html',
+                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
+
+    def post(self, request):
+        form = AddPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+        return render(request, 'bands/addpage.html',
+                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
 def contact(request):
