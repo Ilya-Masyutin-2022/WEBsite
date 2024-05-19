@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic import TemplateView
+from django.views.generic import ListView
 
 from bands.forms import AddPostForm, UploadFileForm
 from bands.models import Bands, Category, TagPost, UploadFiles
@@ -59,22 +60,18 @@ def show_tag_postlist(request, tag_slug):
     return render(request, 'bands/index.html', context=data)
 
 
-class BandsHome(TemplateView):
+class BandsHome(ListView):
     template_name = 'bands/index.html'
-    extra_context = {
-        'title': 'Главная страница',
-        'menu': menu,
-        'posts':
-            Bands.published.all().select_related('cat'),
-        'cat_selected': 0,
-    }
+    context_object_name = 'posts'
 
-    def get_context_data(self, **kwargs):
+    def get_queryset(self):
+        return Bands.published.all().select_related('cat')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная страница'
         context['menu'] = menu
-        context['posts'] = Bands.published.all().select_related('cat')
-        context['cat_selected'] = int(self.request.GET.get('cat_id', 0))
+        context['cat_selected'] = 0
         return context
 
 
