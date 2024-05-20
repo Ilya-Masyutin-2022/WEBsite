@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.views.generic import ListView
 
 from bands.forms import AddPostForm, UploadFileForm
@@ -36,28 +36,29 @@ def show_category(request, cat_slug):
     return render(request, 'bands/index.html', context=data)
 
 
-def show_post(request, post_slug):
-    post = get_object_or_404(Bands, slug=post_slug)
-    data = {
-        'title': post.title,
-        'menu': menu,
-        'post': post,
-        'cat_selected': 1,
-    }
-    return render(request, 'bands/post.html',
-                  context=data)
+class ShowPost(DetailView):
+    model = Bands
+    template_name = 'bands/post.html'
+    slug_url_kwarg = 'post_slug'
+    context_object_name = 'post'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Bands.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
-def show_tag_postlist(request, tag_slug):
-    tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(is_published=Bands.Status.PUBLISHED)
-    data = {
-        'title': f'Тег: {tag.tag}',
-        'menu': menu,
-        'posts': posts,
-        'cat_selected': None,
-    }
-    return render(request, 'bands/index.html', context=data)
+class TagPostList(ListView):
+    template_name = 'bands/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = context['post']
+        context['menu'] = menu
+        return context
+
+    def get_queryset(self):
+        return Bands.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
 
 
 class BandsHome(ListView):
