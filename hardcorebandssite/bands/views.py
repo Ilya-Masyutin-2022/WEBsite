@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, DetailView, FormView, CreateView
+from django.views.generic import TemplateView, DetailView, FormView, CreateView, UpdateView
 from django.views.generic import ListView
 
 from bands.forms import AddPostForm, UploadFileForm
@@ -127,6 +127,17 @@ class AddPage(CreateView):
     extra_context = {
         'menu': menu,
         'title': 'Добавление статьи',
+    }
+
+
+class UpdatePage(UpdateView):
+    model = Bands
+    fields = ['title', 'content', 'photo', 'is_published', 'cat']
+    template_name = 'bands/addpage.html'
+    success_url = reverse_lazy('home')
+    extra_context = {
+        'menu': menu,
+        'title': 'Редактирование статьи',
     }
 
 
