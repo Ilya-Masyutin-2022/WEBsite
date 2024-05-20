@@ -75,6 +75,23 @@ class BandsHome(ListView):
         return context
 
 
+class BandsCategory(ListView):
+    template_name = 'bands/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat = context['posts'][0].cat
+        context['title'] = 'Категория - ' + cat.name
+        context['menu'] = menu
+        context['cat_selected'] = cat.id
+        return context
+
+    def get_queryset(self):
+        return Bands.published.filter(cat__slug=self.kwargs['cat_slug']).select_related('cat')
+
+
 def about(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
