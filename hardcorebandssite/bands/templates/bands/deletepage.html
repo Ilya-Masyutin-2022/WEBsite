@@ -1,0 +1,13 @@
+{% extends 'bands/base.html' %}
+
+{% block content %}
+<h1>{{title}}</h1>
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>Вы уверены, что хотите удалить "{{object}}"?</p>
+    {{ form.as_p }}
+    <input type="submit" value="Удалить">
+</form>
+
+{% endblock %}

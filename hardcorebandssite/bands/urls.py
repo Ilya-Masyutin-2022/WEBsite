@@ -8,8 +8,9 @@ register_converter(converters.FourDigitYearConverter, "year4")
 urlpatterns = [
     path('', views.BandsHome.as_view(), name='home'),
     path('about/', views.about, name='about'),
-    path('edit/<int:pk>/', views.UpdatePage.as_view(), name='edit_page'),
     path('addpage/', views.AddPage.as_view(), name='addpage'),
+    path('edit/<int:pk>/', views.UpdatePage.as_view(), name='edit_page'),
+    path('delete/<int:pk>/', views.DeletePage.as_view(), name='edit_page'),
     path('contact/', views.contact, name='contact'),
     path('login/', views.login, name='login'),
     path('post/<slug:post_slug>/', views.ShowPost.as_view(), name='post'),
