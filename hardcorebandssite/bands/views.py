@@ -1,7 +1,8 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, FormView
 from django.views.generic import ListView
 
 from bands.forms import AddPostForm, UploadFileForm
@@ -118,19 +119,18 @@ def addpage(request):
                   {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
-class AddPage(View):
-    def get(self, request):
-        form = AddPostForm()
-        return render(request, 'bands/addpage.html',
-                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
+class AddPage(FormView):
+    form_class = AddPostForm
+    template_name = 'bands/addpage.html'
+    success_url = reverse_lazy('home')
+    extra_context = {
+        'menu': menu,
+        'title': 'Добавление статьи',
+    }
 
-    def post(self, request):
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-        return render(request, 'bands/addpage.html',
-                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 def contact(request):
