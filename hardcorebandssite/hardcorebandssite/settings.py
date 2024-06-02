@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'bands.apps.BandsConfig',
     "debug_toolbar",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [

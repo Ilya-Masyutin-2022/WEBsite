@@ -1,15 +1,12 @@
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse, reverse_lazy
-from django.views import View
-from django.views.generic import TemplateView, DetailView, FormView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic import ListView
 
-from bands.forms import AddPostForm, UploadFileForm
-from bands.models import Bands, Category, TagPost, UploadFiles
-
-import uuid
+from bands.forms import AddPostForm
+from bands.models import Bands, Category, TagPost
 
 from bands.utils import DataMixin
 
