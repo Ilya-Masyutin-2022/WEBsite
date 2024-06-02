@@ -10,6 +10,8 @@ from bands.models import Bands, Category, TagPost, UploadFiles
 
 import uuid
 
+from bands.utils import DataMixin
+
 menu = [
     {'title': "О сайте", 'url_name': 'about'},
     {'title': "Добавить статью", 'url_name': 'addpage'},
@@ -37,32 +39,34 @@ def show_category(request, cat_slug):
     return render(request, 'bands/index.html', context=data)
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Bands
     template_name = 'bands/post.html'
     slug_url_kwarg = 'post_slug'
     context_object_name = 'post'
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(Bands.published, slug=self.kwargs[self.slug_url_kwarg])
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return self.get_mixin_context(context, title=context['post'])
 
 
-class TagPostList(ListView):
+class TagPostList(DataMixin, ListView):
     template_name = 'bands/index.html'
     context_object_name = 'posts'
     allow_empty = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['post']
-        context['menu'] = menu
-        return context
-
-    def get_queryset(self):
-        return Bands.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
+        tag = TagPost.objects.get(slug=self.kwargs['tag_slug'])
+        return self.get_mixin_context(context,
+                                      title='Тег: ' + tag.tag)
 
 
-class BandsHome(ListView):
+def get_queryset(self):
+    return Bands.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
+
+
+class BandsHome(DataMixin, ListView):
     template_name = 'bands/index.html'
     context_object_name = 'posts'
 
@@ -70,25 +74,22 @@ class BandsHome(ListView):
         return Bands.published.all().select_related('cat')
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Главная страница'
-        context['menu'] = menu
-        context['cat_selected'] = 0
-        return context
+        return self.get_mixin_context(super().get_context_data(**kwargs),
+                                      title='Главная страница',
+                                      cat_selected=0)
 
 
-class BandsCategory(ListView):
+class BandsCategory(DataMixin, ListView):
     template_name = 'bands/index.html'
     context_object_name = 'posts'
     allow_empty = False
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cat = context['posts'][0].cat
-        context['title'] = 'Категория - ' + cat.name
-        context['menu'] = menu
-        context['cat_selected'] = cat.id
-        return context
+        return self.get_mixin_context(context,
+                                      title='Категория - ' + cat.name,
+                                      cat_selected=cat.id)
 
     def get_queryset(self):
         return Bands.published.filter(cat__slug=self.kwargs['cat_slug']).select_related('cat')
@@ -122,12 +123,9 @@ def addpage(request):
 class AddPage(CreateView):
     model = Bands
     fields = ['title', 'slug', 'content', 'is_published', 'cat']
-    template_name = 'bands/addpage.html'
+    template_name = 'women/addpage.html'
     success_url = reverse_lazy('home')
-    extra_context = {
-        'menu': menu,
-        'title': 'Добавление статьи',
-    }
+    title_page = 'Добавление статьи'
 
 
 class UpdatePage(UpdateView):
@@ -135,10 +133,7 @@ class UpdatePage(UpdateView):
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'bands/addpage.html'
     success_url = reverse_lazy('home')
-    extra_context = {
-        'menu': menu,
-        'title': 'Редактирование статьи',
-    }
+    title_page = 'Редактирование статьи'
 
 
 class DeletePage(DeleteView):
@@ -146,10 +141,7 @@ class DeletePage(DeleteView):
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'bands/deletepage.html'
     success_url = reverse_lazy('home')
-    extra_context = {
-        'menu': menu,
-        'title': 'Удаление статьи',
-    }
+    title_page = 'Удаление статьи'
 
 
 def contact(request):
