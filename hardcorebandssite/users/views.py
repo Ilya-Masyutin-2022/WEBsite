@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
+from django.views.generic import CreateView
 
 from users.forms import LoginUserForm, RegisterUserForm
 
@@ -24,15 +25,21 @@ class LogoutView(View):
         return redirect('home')
 
 
-def register(request):
-    if request.method == "POST":
-        form = RegisterUserForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)  # создание объекта без сохранения в БД
-            user.set_password(form.cleaned_data['password'])
-            user.save()
-            return render(request,'users/register_done.html')
-    else:
-        form = RegisterUserForm()
-    return render(request, 'users/register.html',
-                  {'form': form})
+# def register(request):
+#     if request.method == "POST":
+#         form = RegisterUserForm(request.POST)
+#         if form.is_valid():
+#             user = form.save(commit=False)  # создание объекта без сохранения в БД
+#             user.set_password(form.cleaned_data['password'])
+#             user.save()
+#             return render(request,'users/register_done.html')
+#     else:
+#         form = RegisterUserForm()
+#     return render(request, 'users/register.html',
+#                   {'form': form})
+
+class RegisterUser(CreateView):
+    # success_url = reverse_lazy('users:login')
+    form_class = RegisterUserForm
+    template_name = 'users/register.html'
+    extra_context = {'title': "Регистрация"}
