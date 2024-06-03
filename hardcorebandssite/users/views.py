@@ -39,7 +39,7 @@ class LogoutView(View):
 #                   {'form': form})
 
 class RegisterUser(CreateView):
-    # success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy('users:login')
     form_class = RegisterUserForm
     template_name = 'users/register.html'
     extra_context = {'title': "Регистрация"}
