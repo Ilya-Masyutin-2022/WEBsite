@@ -1,5 +1,10 @@
 {% extends 'bands/base.html' %}
 {% block breadcrumbs %}
+
+{% if perms.bands.change_bands %}
+<p ><a href="{% url 'edit_page' post.slug %}">Редактировать</a></p>
+{% endif %}
+
 <!-- Теги -->
 {% with post.tags.all as tags %}
 {% if tags %}

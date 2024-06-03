@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
@@ -119,7 +119,7 @@ def addpage(request):
                   {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
-class AddPage(LoginRequiredMixin, DataMixin, CreateView):
+class AddPage(PermissionRequiredMixin, LoginRequiredMixin, DataMixin, CreateView):
     def form_valid(self, form):
         w = form.save(commit=False)
         w.author = self.request.user
@@ -131,17 +131,19 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     template_name = 'bands/addpage.html'
     success_url = reverse_lazy('home')
     title_page = 'Добавление статьи'
+    permission_required = 'bands.add_bands'
 
 
-class UpdatePage(UpdateView):
+class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
     model = Bands
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'bands/addpage.html'
     success_url = reverse_lazy('home')
     title_page = 'Редактирование статьи'
+    permission_required = 'bands.change_bands'
 
 
-class DeletePage(DeleteView):
+class DeletePage(DataMixin, DeleteView):
     model = Bands
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'bands/deletepage.html'
@@ -149,6 +151,7 @@ class DeletePage(DeleteView):
     title_page = 'Удаление статьи'
 
 
+@permission_required(perm='bands.add_bands', raise_exception=True)
 def contact(request):
     return HttpResponse("Обратная связь")
 
