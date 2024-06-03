@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
@@ -118,7 +119,8 @@ def addpage(request):
                   {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
-class AddPage(CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
+    # login_url = '/admin/'
     model = Bands
     fields = ['title', 'slug', 'content', 'is_published', 'cat']
     template_name = 'bands/addpage.html'
