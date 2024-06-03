@@ -120,6 +120,11 @@ def addpage(request):
 
 
 class AddPage(LoginRequiredMixin, DataMixin, CreateView):
+    def form_valid(self, form):
+        w = form.save(commit=False)
+        w.author = self.request.user
+        return super().form_valid(form)
+
     # login_url = '/admin/'
     model = Bands
     fields = ['title', 'slug', 'content', 'is_published', 'cat']
