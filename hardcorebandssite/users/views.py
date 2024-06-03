@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
 
-from users.forms import LoginUserForm
+from users.forms import LoginUserForm, RegisterUserForm
 
 
 class LoginUser(LoginView):
@@ -22,3 +22,9 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('home')
+
+
+def register(request):
+    form = RegisterUserForm()
+    return render(request, 'users/register.html',
+                  {'form': form})
