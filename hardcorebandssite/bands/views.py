@@ -119,7 +119,7 @@ def addpage(request):
 class AddPage(CreateView):
     model = Bands
     fields = ['title', 'slug', 'content', 'is_published', 'cat']
-    template_name = 'women/addpage.html'
+    template_name = 'bands/addpage.html'
     success_url = reverse_lazy('home')
     title_page = 'Добавление статьи'
 
