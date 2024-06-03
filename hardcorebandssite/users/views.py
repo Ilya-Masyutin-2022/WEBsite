@@ -9,7 +9,7 @@ from users.forms import LoginUserForm
 
 
 class LoginUser(LoginView):
-    form_class = AuthenticationForm
+    form_class = LoginUserForm
     template_name = 'users/login.html'
     extra_context = {'title': "Авторизация"}
 
