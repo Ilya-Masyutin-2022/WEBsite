@@ -1,6 +1,6 @@
 {% extends 'bands/base.html' %}
-{% block breadcrumbs %}
 
+{% block breadcrumbs %}
 {% if perms.bands.change_bands %}
 <p ><a href="{% url 'edit_page' post.slug %}">Редактировать</a></p>
 {% endif %}
@@ -17,10 +17,13 @@
 {% endif %}
 {% endwith %}
 {% endblock %}
+
 {% block content %}
 <h1>{{post.title}}</h1>
+
 {% if post.photo %}
 <p ><img class="img-article-left" src="{{post.photo.url}}"></p>
 {% endif %}
+
 {{post.content|linebreaks}}
 {% endblock %}
