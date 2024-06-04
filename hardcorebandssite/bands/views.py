@@ -101,7 +101,8 @@ class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
 
 @permission_required(perm='bands.add_bands', raise_exception=True)
 def contact(request):
-    return HttpResponse("Обратная связь")
+    return render(request, 'bands/feedback.html',
+                  {'title': 'Обратная связь'})
 
 
 def login(request):
